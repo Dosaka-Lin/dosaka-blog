@@ -4,61 +4,43 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 import SectionDivider from "@/components/ui/SectionDivider";
 import GlassCard from "@/components/ui/GlassCard";
 import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import { competitionAwards, platforms } from "@/data/competitions";
 import { Trophy, Medal, ExternalLink, TrendingUp } from "lucide-react";
 import useCodeforces from "@/hooks/useCodeforces";
-import Button from "@/components/ui/Button";
+import useLuogu from "@/hooks/useLuogu";
 
-const levelConfig = {
-  gold: { label: "金奖", variant: "gold" as const },
-  silver: { label: "银奖", variant: "blue" as const },
-  bronze: { label: "铜奖", variant: "purple" as const },
-  participation: { label: "参赛", variant: "default" as const },
+const levelConfig: Record<string, { label: string; variant: "gold" | "blue" | "purple" | "red" | "default" }> = {
+  gold: { label: "金奖", variant: "gold" },
+  silver: { label: "银奖", variant: "blue" },
+  bronze: { label: "铜奖", variant: "purple" },
+  national: { label: "国奖", variant: "red" },
+  participation: { label: "参赛", variant: "default" },
 };
 
-function PlatformCard({
-  name,
-  handle,
-  color,
-  url,
-  data,
-  loading,
-}: {
-  name: string;
-  handle: string;
-  color: string;
-  url: string;
-  data?: { rating?: number; solved?: number };
-  loading: boolean;
-}) {
-  return (
-    <GlassCard hover className="p-6 text-center">
-      <div className="text-xs text-text-muted uppercase tracking-wider mb-1">{name}</div>
-      <div className="text-2xl font-display font-bold mb-1" style={{ color }}>
-        {loading ? (
-          <span className="text-text-muted text-base">加载中...</span>
-        ) : data?.rating ? (
-          data.rating
-        ) : (
-          <span className="text-text-muted text-base">---</span>
-        )}
-      </div>
-      <div className="text-sm text-text-secondary mb-3">{handle}</div>
-      {data?.solved !== undefined && (
-        <div className="text-xs text-text-muted">
-          已解决 <span className="text-text-primary font-medium">{data.solved}</span> 题
-        </div>
-      )}
-      <Button href={url} variant="ghost" size="sm" external className="mt-2">
-        <ExternalLink size={12} />
-        访问主页
-      </Button>
-    </GlassCard>
-  );
-}
+// CF 等级颜色映射
+const cfRankColors: Record<string, string> = {
+  "newbie": "#808080",
+  "pupil": "#008000",
+  "specialist": "#03A89E",
+  "expert": "#0000FF",
+  "candidate master": "#AA00AA",
+  "master": "#FF8C00",
+  "grandmaster": "#FF0000",
+};
 
 export default function CompetitionsPage() {
   const { data: cfData, loading: cfLoading } = useCodeforces("Dosaka");
+  const { data: luoguData, loading: luoguLoading } = useLuogu("Dosaka");
+
+  const luoguLevelColors: Record<string, string> = {
+    "Red": "#FF0000",
+    "Orange": "#FF8C00",
+    "Yellow": "#FFD700",
+    "Blue": "#4169E1",
+    "Green": "#008000",
+    "Gray": "#808080",
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
@@ -68,7 +50,7 @@ export default function CompetitionsPage() {
             算法竞赛
           </h1>
           <p className="text-text-muted max-w-xl mx-auto">
-            Codeforces / 牛客 / Luogu 实时数据
+            Codeforces / Luogu 实时数据
           </p>
         </div>
       </ScrollReveal>
@@ -78,47 +60,110 @@ export default function CompetitionsPage() {
       {/* Platform Cards */}
       <ScrollReveal delay={0.1}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
-          <PlatformCard
-            name={platforms.codeforces.name}
-            handle={platforms.codeforces.handle}
-            color={platforms.codeforces.color}
-            url={platforms.codeforces.url}
-            data={cfData ? { rating: cfData.rating, solved: cfData.solvedCount } : undefined}
-            loading={cfLoading}
-          />
-          <PlatformCard
-            name={platforms.nowcoder.name}
-            handle={platforms.nowcoder.handle}
-            color={platforms.nowcoder.color}
-            url={platforms.nowcoder.url}
-            loading={false}
-          />
-          <PlatformCard
-            name={platforms.luogu.name}
-            handle={platforms.luogu.handle}
-            color={platforms.luogu.color}
-            url={platforms.luogu.url}
-            loading={false}
-          />
+          {/* Codeforces */}
+          <GlassCard hover className="p-6 text-center">
+            <div className="text-xs text-text-muted uppercase tracking-wider mb-1">Codeforces</div>
+            {cfLoading ? (
+              <div className="text-text-muted text-base my-2">加载中...</div>
+            ) : cfData ? (
+              <>
+                <div
+                  className="text-3xl font-display font-bold mb-1"
+                  style={{ color: cfRankColors[cfData.rank?.toLowerCase()] || cfRankColors.specialist }}
+                >
+                  {cfData.rating}
+                </div>
+                <div className="text-sm mb-1" style={{ color: cfRankColors[cfData.rank?.toLowerCase()] || cfRankColors.specialist }}>
+                  {cfData.rank}
+                </div>
+                <div className="text-xs text-text-muted">max: {cfData.maxRating}</div>
+              </>
+            ) : (
+              <div className="text-text-muted text-base my-2">获取失败</div>
+            )}
+            <div className="text-sm text-text-secondary mt-2 mb-3">{platforms.codeforces.handle}</div>
+            <Button href={platforms.codeforces.url} variant="ghost" size="sm" external>
+              <ExternalLink size={12} /> 访问主页
+            </Button>
+          </GlassCard>
+
+          {/* 牛客 */}
+          <GlassCard hover className="p-6 text-center">
+            <div className="text-xs text-text-muted uppercase tracking-wider mb-1">牛客</div>
+            <div className="text-text-muted text-sm my-2">
+              暂无公开 API
+            </div>
+            <div className="text-sm text-text-secondary mt-2 mb-3">{platforms.nowcoder.handle}</div>
+            <Button href={platforms.nowcoder.url} variant="ghost" size="sm" external>
+              <ExternalLink size={12} /> 访问主页
+            </Button>
+          </GlassCard>
+
+          {/* Luogu */}
+          <GlassCard hover className="p-6 text-center">
+            <div className="text-xs text-text-muted uppercase tracking-wider mb-1">Luogu</div>
+            {luoguLoading ? (
+              <div className="text-text-muted text-base my-2">加载中...</div>
+            ) : luoguData ? (
+              <>
+                <div
+                  className="text-3xl font-display font-bold mb-1"
+                  style={{ color: luoguLevelColors[luoguData.level] || "#808080" }}
+                >
+                  {luoguData.level}
+                </div>
+                <div className="text-xs text-text-muted">
+                  uid: {luoguData.uid}
+                </div>
+              </>
+            ) : (
+              <div className="text-text-muted text-base my-2">获取失败</div>
+            )}
+            <div className="text-sm text-text-secondary mt-2 mb-3">{platforms.luogu.handle}</div>
+            <Button href={platforms.luogu.url} variant="ghost" size="sm" external>
+              <ExternalLink size={12} /> 访问主页
+            </Button>
+          </GlassCard>
         </div>
       </ScrollReveal>
 
       <SectionDivider />
 
-      {/* Rating Chart Placeholder */}
-      <ScrollReveal delay={0.15}>
-        <div className="my-10">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp size={18} className="text-tohsaka-gold" />
-            <h2 className="text-xl font-display font-bold text-text-primary">Rating 变化</h2>
-          </div>
-          <GlassCard hover={false} className="p-6">
-            <div className="h-48 flex items-center justify-center text-text-muted text-sm">
-              CF 数据加载后将在此展示 Rating 曲线图
+      {/* Rating Change */}
+      {cfData && cfData.contests.length > 0 && (
+        <ScrollReveal delay={0.15}>
+          <div className="my-10">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp size={18} className="text-tohsaka-gold" />
+              <h2 className="text-xl font-display font-bold text-text-primary">CF 近期比赛</h2>
             </div>
-          </GlassCard>
-        </div>
-      </ScrollReveal>
+            <GlassCard hover={false} className="p-4 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-text-muted border-b border-border-subtle">
+                    <th className="text-left py-2 px-3">比赛</th>
+                    <th className="text-right py-2 px-3">排名</th>
+                    <th className="text-right py-2 px-3">Rating变化</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...cfData.contests].reverse().map((c, i) => (
+                    <tr key={i} className="border-b border-border-subtle/50">
+                      <td className="py-2 px-3 text-text-secondary text-xs max-w-[200px] truncate">{c.name}</td>
+                      <td className="py-2 px-3 text-right text-text-secondary">#{c.rank}</td>
+                      <td className={`py-2 px-3 text-right font-medium ${
+                        c.ratingChange.startsWith("+") ? "text-green-400" : "text-red-400"
+                      }`}>
+                        {c.ratingChange}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </GlassCard>
+          </div>
+        </ScrollReveal>
+      )}
 
       <SectionDivider />
 
@@ -150,9 +195,12 @@ export default function CompetitionsPage() {
                     <h3 className="text-text-primary font-medium">{award.title}</h3>
                     <p className="text-sm text-text-secondary">{award.contest}</p>
                     {award.rank && (
-                      <Badge variant={levelConfig[award.level].variant} size="sm">
+                      <Badge variant={levelConfig[award.level]?.variant || "default"} size="sm">
                         {award.rank}
                       </Badge>
+                    )}
+                    {award.description && (
+                      <p className="text-xs text-text-muted mt-1">{award.description}</p>
                     )}
                   </div>
                 </div>

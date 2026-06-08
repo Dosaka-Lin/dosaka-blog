@@ -53,9 +53,9 @@ function AnimatedNumber({ target }: { target: string }) {
 }
 
 const defaultStats: Stat[] = [
-  { icon: <Trophy size={22} />, label: "Codeforces Rating", value: "1800+", sub: "Expert" },
-  { icon: <FolderGit2 size={22} />, label: "GitHub 项目", value: "10+", sub: "开源项目" },
-  { icon: <Calendar size={22} />, label: "竞赛经验", value: "3+", sub: "年" },
+  { icon: <Trophy size={22} />, label: "Codeforces Rating", value: "1421", sub: "Specialist" },
+  { icon: <FolderGit2 size={22} />, label: "GitHub 项目", value: "1+", sub: "开源项目" },
+  { icon: <Calendar size={22} />, label: "竞赛经验", value: "2+", sub: "年" },
 ];
 
 export default function StatsCards() {

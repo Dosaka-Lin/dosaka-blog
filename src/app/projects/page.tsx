@@ -6,18 +6,35 @@ import SectionDivider from "@/components/ui/SectionDivider";
 import GlassCard from "@/components/ui/GlassCard";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
-import { projects, categories } from "@/data/projects";
 import { GithubIcon } from "@/components/ui/Icons";
-import { ExternalLink } from "lucide-react";
+import { projects, categories } from "@/data/projects";
+import useGithub from "@/hooks/useGithub";
+import { ExternalLink, Star, FolderGit2 } from "lucide-react";
 import Link from "next/link";
 
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const { projects: githubProjects, loading } = useGithub("Dosaka-Lin");
+
+  // Merge local + GitHub projects
+  const allProjects = [
+    ...projects,
+    ...githubProjects.map((p) => ({
+      id: `gh-${p.id}`,
+      title: p.title,
+      description: p.description,
+      techs: [p.language, ...p.topics].filter(Boolean) as string[],
+      category: "other" as const,
+      github: p.url,
+      demo: p.demo || undefined,
+      featured: false,
+    })),
+  ];
 
   const filtered =
     activeCategory === "all"
-      ? projects
-      : projects.filter((p) => p.category === activeCategory);
+      ? allProjects
+      : allProjects.filter((p) => p.category === activeCategory);
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
@@ -27,15 +44,15 @@ export default function ProjectsPage() {
             项目经历
           </h1>
           <p className="text-text-muted max-w-xl mx-auto">
-            我参与和开发的项目。更多项目请访问我的{" "}
-            <Link
-              href="https://github.com/Dosaka"
-              target="_blank"
-              className="text-tohsaka-red hover:underline"
-            >
-              GitHub
-            </Link>
+            本地项目 + GitHub 仓库。编辑{" "}
+            <code className="text-tohsaka-red text-xs bg-white/5 px-1.5 py-0.5 rounded">
+              src/data/projects.ts
+            </code>{" "}
+            添加更多
           </p>
+          {loading && (
+            <p className="text-text-muted text-xs mt-2">正在加载 GitHub 项目...</p>
+          )}
         </div>
       </ScrollReveal>
 
@@ -64,43 +81,40 @@ export default function ProjectsPage() {
       {filtered.length === 0 ? (
         <div className="text-center py-20 text-text-muted">
           <p className="text-lg mb-2">暂无项目</p>
-          <p className="text-sm">你可以编辑 src/data/projects.ts 添加自己的项目</p>
+          <p className="text-sm">编辑 src/data/projects.ts 添加项目，或将 GitHub 仓库设为 Public</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((project, i) => (
-            <ScrollReveal key={project.id} delay={i * 0.08}>
+            <ScrollReveal key={project.id} delay={i * 0.05}>
               <GlassCard className="p-6 h-full flex flex-col">
-                <h3 className="text-lg font-display font-semibold text-text-primary mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-sm text-text-secondary leading-relaxed mb-4 flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  {project.github?.includes("github.com") ? (
+                    <Star size={14} className="text-tohsaka-gold" />
+                  ) : (
+                    <FolderGit2 size={14} className="text-tohsaka-red" />
+                  )}
+                  <h3 className="text-lg font-display font-semibold text-text-primary truncate">
+                    {project.title}
+                  </h3>
+                </div>
+                <p className="text-sm text-text-secondary leading-relaxed mb-4 flex-1 line-clamp-3">
                   {project.description}
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                  {project.techs.map((tech) => (
+                  {project.techs.slice(0, 5).map((tech) => (
                     <Badge key={tech}>{tech}</Badge>
                   ))}
                 </div>
                 <div className="flex items-center gap-2 mt-auto">
                   {project.github && (
-                    <Button
-                      href={project.github}
-                      variant="ghost"
-                      size="sm"
-                      external
-                    >
+                    <Button href={project.github} variant="ghost" size="sm" external>
                       <GithubIcon size={14} />
                       GitHub
                     </Button>
                   )}
                   {project.demo && (
-                    <Button
-                      href={project.demo}
-                      variant="ghost"
-                      size="sm"
-                      external
-                    >
+                    <Button href={project.demo} variant="ghost" size="sm" external>
                       <ExternalLink size={14} />
                       Demo
                     </Button>

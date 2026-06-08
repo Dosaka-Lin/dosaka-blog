@@ -40,7 +40,7 @@ export default function AboutPage() {
       {/* Action Buttons */}
       <ScrollReveal delay={0.1}>
         <div className="flex justify-center gap-3 mb-12">
-          <Button href="https://github.com/Dosaka" variant="primary" size="sm" external>
+          <Button href="https://github.com/Dosaka-Lin" variant="primary" size="sm" external>
             <GithubIcon size={16} />
             GitHub
           </Button>

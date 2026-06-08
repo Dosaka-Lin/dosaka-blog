@@ -17,7 +17,7 @@ export default function Footer() {
         {/* Links */}
         <div className="flex items-center gap-4">
           <Link
-            href="https://github.com/Dosaka"
+            href="https://github.com/Dosaka-Lin"
             target="_blank"
             rel="noopener noreferrer"
             className="text-text-muted hover:text-tohsaka-red transition-colors"

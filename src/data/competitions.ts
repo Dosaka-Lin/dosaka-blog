@@ -5,23 +5,48 @@ export interface CompetitionAward {
   date: string;
   rank?: string;
   description?: string;
-  level: "gold" | "silver" | "bronze" | "participation";
+  level: "gold" | "silver" | "bronze" | "national" | "participation";
 }
 
-// TODO: 在此添加你的竞赛获奖
 export const competitionAwards: CompetitionAward[] = [
   {
-    id: "example-1",
-    title: "示例奖项",
-    contest: "算法竞赛名称",
-    date: "2025-01",
-    rank: "金奖",
-    description: "这是一个示例奖项，你可以删除它并添加自己的获奖记录。",
-    level: "gold",
+    id: "ccpc-nanchang-2026",
+    title: "CCPC 2026 南昌邀请赛 银奖",
+    contest: "CCPC 南昌邀请赛",
+    date: "2026",
+    rank: "银奖",
+    description: "中国大学生程序设计竞赛南昌邀请赛",
+    level: "silver",
+  },
+  {
+    id: "ccpc-jiangxi-silver",
+    title: "CCPC 江西省赛 银奖",
+    contest: "CCPC 江西省赛",
+    date: "2026",
+    rank: "银奖",
+    description: "中国大学生程序设计竞赛江西省赛",
+    level: "silver",
+  },
+  {
+    id: "icpc-jiangxi-bronze",
+    title: "ICPC 江西省赛 铜奖",
+    contest: "ICPC 江西省赛",
+    date: "2026",
+    rank: "铜奖",
+    description: "国际大学生程序设计竞赛江西省赛",
+    level: "bronze",
+  },
+  {
+    id: "ruikang-national-3",
+    title: "睿抗编程 国赛三等奖",
+    contest: "睿抗编程开发者大赛",
+    date: "2025",
+    rank: "国三",
+    description: "睿抗编程开发者大赛全国总决赛",
+    level: "national",
   },
 ];
 
-// 平台配置
 export const platforms = {
   codeforces: {
     name: "Codeforces",

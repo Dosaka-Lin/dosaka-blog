@@ -18,7 +18,7 @@ export const projects: Project[] = [
     description: "这是一个示例项目，你可以删除它并添加自己的项目。",
     techs: ["TypeScript", "Next.js", "Tailwind"],
     category: "fullstack",
-    github: "https://github.com/Dosaka",
+    github: "https://github.com/Dosaka-Lin",
     featured: true,
   },
 ];

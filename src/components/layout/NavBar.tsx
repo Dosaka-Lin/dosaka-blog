@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/competitions", label: "竞赛" },
   { href: "/skills", label: "技能" },
   { href: "/blog", label: "博客" },
+  { href: "/templates", label: "模板" },
   { href: "/about", label: "关于" },
 ];
 
