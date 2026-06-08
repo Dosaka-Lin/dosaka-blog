@@ -15,11 +15,20 @@ const categoryIcons: Record<string, React.ReactNode> = {
   tool: <Wrench size={18} />,
 };
 
-const categoryColors: Record<string, string> = {
-  language: "tohsaka-red",
-  framework: "tohsaka-gold",
-  algorithm: "tohsaka-purple",
-  tool: "tohsaka-blue",
+// Use full Tailwind class names (static strings — no dynamic interpolation)
+// to prevent tree-shaking at build time
+const categoryIconClasses: Record<string, string> = {
+  language: "text-tohsaka-red",
+  framework: "text-tohsaka-gold",
+  algorithm: "text-tohsaka-purple",
+  tool: "text-tohsaka-blue",
+};
+
+const categoryBarClasses: Record<string, string> = {
+  language: "bg-tohsaka-red",
+  framework: "bg-tohsaka-gold",
+  algorithm: "bg-tohsaka-purple",
+  tool: "bg-tohsaka-blue",
 };
 
 // Simple radar chart component
@@ -139,7 +148,7 @@ export default function SkillsPage() {
         {skillCategories.map((cat, ci) => (
           <ScrollReveal key={cat.key} delay={ci * 0.1}>
             <GlassCard hover={false} className="p-6 h-full">
-              <div className={`flex items-center gap-2 mb-4 text-${categoryColors[cat.key]}`}>
+              <div className={`flex items-center gap-2 mb-4 ${categoryIconClasses[cat.key]}`}>
                 {categoryIcons[cat.key]}
                 <h3 className="font-display font-semibold text-text-primary">{cat.label}</h3>
               </div>
@@ -154,7 +163,7 @@ export default function SkillsPage() {
                     </div>
                     <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
                       <div
-                        className={`h-full rounded-full bg-${categoryColors[cat.key]} transition-all duration-1000`}
+                        className={`h-full rounded-full ${categoryBarClasses[cat.key]} transition-all duration-1000`}
                         style={{ width: `${skill.level}%` }}
                       />
                     </div>
