@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const revalidate = 300;
+
 export async function GET(request: NextRequest) {
   const handle = request.nextUrl.searchParams.get("handle") || "Dosaka";
 

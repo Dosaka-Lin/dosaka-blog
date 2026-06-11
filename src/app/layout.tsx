@@ -28,7 +28,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dosaka_Lin | Algorithm Engineer",
+  title: {
+    default: "Dosaka_Lin | Algorithm Engineer",
+    template: "%s | Dosaka_Lin",
+  },
   description:
     "Dosaka_Lin — Algorithm Engineer & Agent Developer. Codeforces Expert. Exploring the frontier of algorithms and AI agents.",
   keywords: ["Dosaka_Lin", "algorithm", "Codeforces", "agent developer", "blog"],

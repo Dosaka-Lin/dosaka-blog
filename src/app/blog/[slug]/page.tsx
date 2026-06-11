@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getPostContent, getAllPosts } from "@/lib/blog";
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
@@ -10,6 +11,22 @@ import Link from "next/link";
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const posts = getAllPosts();
+  const post = posts.find((p) => p.slug === slug);
+  if (!post) return { title: "文章未找到 | Dosaka_Lin" };
+
+  return {
+    title: `${post.title} | Dosaka_Lin`,
+    description: post.excerpt,
+  };
 }
 
 export default async function BlogPostPage({

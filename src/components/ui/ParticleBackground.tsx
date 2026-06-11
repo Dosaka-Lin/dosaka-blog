@@ -16,6 +16,8 @@ export default function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -25,10 +27,16 @@ export default function ParticleBackground() {
     let animId: number;
     const particles: Particle[] = [];
     const colors = [
-      "rgba(196, 30, 58,",   // red
-      "rgba(212, 168, 67,",  // gold
-      "rgba(123, 79, 191,",  // purple
+      "rgba(196, 30, 58,",
+      "rgba(212, 168, 67,",
+      "rgba(123, 79, 191,",
     ];
+
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 20 : 40;
+    const connectionDist = isMobile ? 80 : 120;
+    const frameInterval = isMobile ? 33 : 16; // ~30fps mobile, ~60fps desktop
+    let lastFrameTime = 0;
 
     function resize() {
       canvas!.width = window.innerWidth;
@@ -37,8 +45,7 @@ export default function ParticleBackground() {
     resize();
     window.addEventListener("resize", resize);
 
-    // Create particles
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -50,7 +57,13 @@ export default function ParticleBackground() {
       });
     }
 
-    function draw() {
+    function draw(timestamp: number) {
+      animId = requestAnimationFrame(draw);
+
+      const elapsed = timestamp - lastFrameTime;
+      if (elapsed < frameInterval) return;
+      lastFrameTime = timestamp - (elapsed % frameInterval);
+
       ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
 
       for (const p of particles) {
@@ -68,26 +81,23 @@ export default function ParticleBackground() {
         ctx!.fill();
       }
 
-      // Draw connections between nearby particles
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
+          if (dist < connectionDist) {
             ctx!.beginPath();
             ctx!.moveTo(particles[i].x, particles[i].y);
             ctx!.lineTo(particles[j].x, particles[j].y);
-            ctx!.strokeStyle = `rgba(196, 30, 58, ${0.04 * (1 - dist / 120)})`;
+            ctx!.strokeStyle = `rgba(196, 30, 58, ${0.04 * (1 - dist / connectionDist)})`;
             ctx!.lineWidth = 0.5;
             ctx!.stroke();
           }
         }
       }
-
-      animId = requestAnimationFrame(draw);
     }
-    draw();
+    animId = requestAnimationFrame(draw);
 
     return () => {
       cancelAnimationFrame(animId);

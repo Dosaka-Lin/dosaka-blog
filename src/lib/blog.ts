@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import matter from "gray-matter";
 
 export interface BlogPostMeta {
   slug: string;
@@ -23,24 +24,19 @@ export function getAllPosts(): BlogPostMeta[] {
       const filePath = path.join(contentDir, file);
       const raw = fs.readFileSync(filePath, "utf-8");
 
-      // Parse frontmatter with regex
-      const frontmatterMatch = raw.match(/^---\n([\s\S]*?)\n---/);
-      if (!frontmatterMatch) return null;
+      const { data, content } = matter(raw);
 
-      const fm = frontmatterMatch[1];
-      const title = fm.match(/title:\s*["']?(.+?)["']?\s*$/m)?.[1] || slug;
-      const date = fm.match(/date:\s*["']?(.+?)["']?\s*$/m)?.[1] || "";
-      const excerpt = fm.match(/excerpt:\s*["']?(.+?)["']?\s*$/m)?.[1] || "";
-      const tagsStr = fm.match(/tags:\s*\[(.+?)\]/m)?.[1] || "";
-      const tags = tagsStr
-        .split(",")
-        .map((t) => t.trim().replace(/["']/g, ""))
-        .filter(Boolean);
-
-      const wordCount = raw.replace(/^---[\s\S]*?---/, "").trim().length;
+      const wordCount = content.trim().length;
       const readingTime = Math.max(1, Math.ceil(wordCount / 500)) + " min";
 
-      return { slug, title, date, excerpt, tags, readingTime };
+      return {
+        slug,
+        title: data.title || slug,
+        date: data.date || "",
+        excerpt: data.excerpt || "",
+        tags: (data.tags || []) as string[],
+        readingTime,
+      };
     })
     .filter(Boolean)
     .sort(
@@ -63,10 +59,9 @@ export async function getPostContent(slug: string): Promise<{
   if (!fs.existsSync(filePath)) return { meta: null, content: "" };
 
   const raw = fs.readFileSync(filePath, "utf-8");
+  const { content } = matter(raw);
   const allPosts = getAllPosts();
   const meta = allPosts.find((p) => p.slug === slug) || null;
-
-  const content = raw.replace(/^---[\s\S]*?---/, "").trim();
 
   return { meta, content };
 }
