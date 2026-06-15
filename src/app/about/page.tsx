@@ -44,7 +44,7 @@ export default function AboutPage() {
             <GithubIcon size={16} />
             GitHub
           </Button>
-          <Button href="mailto:dosaka@example.com" variant="outline" size="sm">
+          <Button href="mailto:1034638770@qq.com" variant="outline" size="sm">
             <Mail size={16} />
             Email
           </Button>

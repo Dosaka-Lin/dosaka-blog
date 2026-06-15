@@ -8,7 +8,6 @@ import Button from "@/components/ui/Button";
 import { competitionAwards, platforms } from "@/data/competitions";
 import { Trophy, Medal, ExternalLink, TrendingUp } from "lucide-react";
 import useCodeforces from "@/hooks/useCodeforces";
-import useLuogu from "@/hooks/useLuogu";
 
 const levelConfig: Record<string, { label: string; variant: "gold" | "blue" | "purple" | "red" | "default" }> = {
   gold: { label: "金奖", variant: "gold" },
@@ -31,16 +30,6 @@ const cfRankColors: Record<string, string> = {
 
 export default function CompetitionsPage() {
   const { data: cfData, loading: cfLoading } = useCodeforces("Dosaka");
-  const { data: luoguData, loading: luoguLoading } = useLuogu("Dosaka");
-
-  const luoguLevelColors: Record<string, string> = {
-    "Red": "#FF0000",
-    "Orange": "#FF8C00",
-    "Yellow": "#FFD700",
-    "Blue": "#4169E1",
-    "Green": "#008000",
-    "Gray": "#808080",
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
@@ -102,23 +91,9 @@ export default function CompetitionsPage() {
           {/* Luogu */}
           <GlassCard hover className="p-6 text-center">
             <div className="text-xs text-text-muted uppercase tracking-wider mb-1">Luogu</div>
-            {luoguLoading ? (
-              <div className="text-text-muted text-base my-2">加载中...</div>
-            ) : luoguData ? (
-              <>
-                <div
-                  className="text-3xl font-display font-bold mb-1"
-                  style={{ color: luoguLevelColors[luoguData.level] || "#808080" }}
-                >
-                  {luoguData.level}
-                </div>
-                <div className="text-xs text-text-muted">
-                  uid: {luoguData.uid}
-                </div>
-              </>
-            ) : (
-              <div className="text-text-muted text-base my-2">获取失败</div>
-            )}
+            <div className="text-text-muted text-sm my-2">
+              暂无公开 API
+            </div>
             <div className="text-sm text-text-secondary mt-2 mb-3">{platforms.luogu.handle}</div>
             <Button href={platforms.luogu.url} variant="ghost" size="sm" external>
               <ExternalLink size={12} /> 访问主页

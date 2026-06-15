@@ -55,7 +55,7 @@ export default function Button({
   }
 
   return (
-    <button onClick={onClick} className={cls}>
+    <button type="button" onClick={onClick} className={cls}>
       {children}
     </button>
   );

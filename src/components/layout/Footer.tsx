@@ -25,7 +25,7 @@ export default function Footer() {
             <GithubIcon size={18} />
           </Link>
           <Link
-            href="mailto:dosaka@example.com"
+            href="mailto:1034638770@qq.com"
             className="text-text-muted hover:text-tohsaka-red transition-colors"
           >
             <Mail size={18} />

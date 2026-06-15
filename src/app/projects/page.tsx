@@ -8,18 +8,16 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { GithubIcon } from "@/components/ui/Icons";
 import { projects, categories } from "@/data/projects";
-import useGithub from "@/hooks/useGithub";
+import githubRepos from "@/data/github-repos.generated.json";
 import { ExternalLink, Star, FolderGit2 } from "lucide-react";
-import Link from "next/link";
 
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const { projects: githubProjects, loading } = useGithub("Dosaka-Lin");
 
-  // Merge local + GitHub projects
+  // Merge local + GitHub projects (fetched at build time)
   const allProjects = [
     ...projects,
-    ...githubProjects.map((p) => ({
+    ...githubRepos.map((p) => ({
       id: `gh-${p.id}`,
       title: p.title,
       description: p.description,
@@ -50,9 +48,6 @@ export default function ProjectsPage() {
             </code>{" "}
             添加更多
           </p>
-          {loading && (
-            <p className="text-text-muted text-xs mt-2">正在加载 GitHub 项目...</p>
-          )}
         </div>
       </ScrollReveal>
 

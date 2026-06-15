@@ -54,6 +54,10 @@ export default function NavBar() {
 
         {/* Mobile menu button */}
         <button
+          type="button"
+          aria-label={open ? "关闭菜单" : "打开菜单"}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
           className="md:hidden p-2 text-text-secondary hover:text-text-primary"
           onClick={() => setOpen(!open)}
         >
@@ -63,7 +67,7 @@ export default function NavBar() {
 
       {/* Mobile Nav */}
       {open && (
-        <div className="md:hidden border-t border-border-subtle bg-bg-deep/95 backdrop-blur-md">
+        <div id="mobile-menu" className="md:hidden border-t border-border-subtle bg-bg-deep/95 backdrop-blur-md">
           <div className="px-4 py-3 flex flex-col gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;

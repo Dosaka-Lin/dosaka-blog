@@ -1,0 +1,22 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/_next/*", "/blog/*"]
+  },
+  "routes": [
+    {
+      "route": "/blog/*/index.html",
+      "rewrite": "/blog/$1/index.html"
+    },
+    {
+      "route": "/*.html",
+      "rewrite": "/$1/index.html"
+    }
+  ],
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/404/index.html",
+      "statusCode": 404
+    }
+  }
+}

@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "tsx scripts/fetch-github.ts",
     "build": "next build",
     "start": "next start",
+    "fetch:github": "tsx scripts/fetch-github.ts",
     "lint": "eslint"
   },
   "dependencies": {
@@ -30,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
     "tailwindcss": "^4",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }
